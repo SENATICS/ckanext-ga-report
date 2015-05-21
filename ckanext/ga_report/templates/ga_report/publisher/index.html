@@ -1,84 +1,60 @@
-<html xmlns:py="http://genshi.edgewall.org/"
-  xmlns:i18n="http://genshi.edgewall.org/i18n"
-  xmlns:xi="http://www.w3.org/2001/XInclude"
-  py:strip="">
+{% extends "qa/base.html" %}
 
-  <xi:include href="../ga_util.html" />
+{% set download_link = h.url_for(controller='ckanext.ga_report.controller:GaDatasetReport',action='publisher_csv',month=c.month or 'all') %}
 
-  <py:def function="page_title">Usage by Publisher</py:def>
+{% import "/ga_report/ga_util.html" as ga_util with context %}
 
-  <py:def function="optional_head">
-    <link rel="stylesheet" type="text/css" href="/scripts/vendor/rickshaw.min.css"/>
-    <link rel="stylesheet" type="text/css" href="/css/ga_report.css?1"/>
-    <script type="text/javascript" src="/scripts/modernizr-2.6.2.custom.js"></script>
-    <script type="text/javascript" src="/scripts/ckanext_ga_reports.js?1"></script>
-    <script type="text/javascript" src="/scripts/vendor/jquery.sparkline.modified.js"></script>
-    <script type="text/javascript" src="/scripts/rickshaw_ie7_shim.js"></script>
-    <script type="text/javascript" src="/scripts/vendor/d3.v2.js"></script>
-    <script type="text/javascript" src="/scripts/vendor/d3.layout.min.js"></script>
-    <script type="text/javascript" src="/scripts/vendor/rickshaw.min.js"></script>
-  </py:def>
+{% block primary_content %}
 
- <py:match path="breadcrumbs">
-    <li><a href="/data/site-usage">Site Analytics</a></li>
-    <li><a href="/data/site-usage/publisher">Publishers</a></li>
-  </py:match>
+  <h1>{{ _('Site Usage') }}</h1>
 
-  <div py:match="content">
-    <py:with vars="download_link=h.url_for(controller='ckanext.ga_report.controller:GaDatasetReport',action='publisher_csv',month=c.month or 'all')">
-      <a class="btn button btn-primary btn-sm pull-right" href="${download_link}"><i class="icon-download"></i>&nbsp; Download as CSV</a>
-    </py:with>
-    <h1>Site Usage</h1>
+  <a class="btn button btn-primary btn-sm pull-right" href="{{ download_link }}"><i class="icon-download"></i>&nbsp; {{ _('Download as CSV') }}</a>
 
-    <div class="row" style="background: #fff;">
-      <div class="col-md-4">
-        <div class="whitebox">
-          <strong>Graph Legend</strong>
-          <div id="graph-legend-container">
-            <div style="display: none;" id="legend_none">(No graph is loaded)</div>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-8">
-        <div class="whitebox">
-          <strong>Publishers</strong>
-           ${rickshaw_graph(c.top_publishers_graph,'publishers')}
-       </div>
-      </div>
+  <strong>{{ _('Graph Legend') }}</strong>
+  <div id="graph-legend-container">
+    <div style="display: none;" id="legend_none">{{ _('(No graph is loaded)') }}</div>
+  </div>
+
+  <strong>{{ _('Publishers') }}</strong>
+    <div class="whitebox">
+        {{ ga_util.rickshaw_graph(c.top_publishers_graph,'publishers') }}
     </div>
 
-       <hr/>
-       <form class="form-inline" action="${h.url_for(controller='ckanext.ga_report.controller:GaDatasetReport',action='publishers')}" method="get">
-          <div class="controls">
-            <h2 class="ga-reports-heading">Statistics for</h2>
-              ${month_selector(c.month, c.months, c.day)}
-          </div>
-       </form>
+    <form class="form-inline" action="{{ h.url_for(controller='ckanext.ga_report.controller:GaDatasetReport',action='publishers') }}" method="get">
+        <h4 class="ga-reports-heading">{{ _('Statistics for') }}:</h4>
+        {{ ga_util.month_selector(c.month, c.months, c.day) }}
+    </form>
 
-     <table class="ga-reports-table table table-condensed table-bordered table-striped">
-       <tr>
-         <th>Publisher</th>
-         <th class="td-numeric">Dataset Views</th>
-       </tr>
-      <py:for each="publisher, views, visits in c.top_publishers">
+    <table class="ga-reports-table table table-condensed table-bordered table-striped">
         <tr>
-          <td>
-              ${h.link_to(publisher.title, h.url_for(controller='ckanext.ga_report.controller:GaDatasetReport', action='read_publisher', id=publisher.name) + (("?month=" + c.month) if c.month else ''))}
-          </td>
-          <td class="td-numeric">${views}</td>
+            <th>{{ _('Publisher') }}</th>
+            <th class="td-numeric">{{ _('Dataset Views') }}</th>
         </tr>
-      </py:for>
-     </table>
-  </div><!--/content-->
+        {% for publisher, views, visits in c.top_publishers %}
+            <tr>
+                <td>
+                {{ h.link_to(publisher.title, h.url_for(controller='ckanext.ga_report.controller:GaDatasetReport', action='read_publisher', id=publisher.name) + (("?month=" + c.month) if c.month else '')) }}
+                </td>
+                <td class="td-numeric">{{ views }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}
 
-  <py:def function="optional_footer">
-    <script type="text/javascript">
-      $(function() {
-        CKAN.GA_Reports.bind_month_selector();
-      });
-    </script>
-  </py:def>
-  <xi:include href="../../layout.html" />
+{% block styles %}
+  {{ super() }}
+  {% resource 'ckanext-ga-report/styles/ga_report.css' %}
+  {% resource 'ckanext-ga-report/styles/rickshaw.css' %}
+{% endblock %}
 
-</html>
+{% block scripts %}
+  {{ super() }}
+  {% resource 'ckanext-ga-report/scripts/ckanext_ga_reports.js' %}
+  {% resource 'ckanext-ga-report/scripts/d3.layout.js' %}
+  {% resource 'ckanext-ga-report/scripts/d3.v2.js' %}
+  {% resource 'ckanext-ga-report/scripts/jquery.sparkline.modified.js' %}
+  {% resource 'ckanext-ga-report/scripts/modernizr-2.6.2.custom.js' %}
+  {% resource 'ckanext-ga-report/scripts/rickshaw.js' %}
+  {% resource 'ckanext-ga-report/scripts/rickshaw_ie7_shim.js' %}
+{% endblock %}
 
