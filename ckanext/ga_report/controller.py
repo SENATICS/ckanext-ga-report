@@ -421,7 +421,7 @@ class GaDatasetReport(BaseController):
                 })
             all_series[package.name]['raw'][entry.period_name] = int(entry.pageviews)
         graph = [ all_series[series_name] for series_name in top_package_names ]
-        c.graph_data = json.dumps( _to_rickshaw(graph) )
+        c.graph_data = json.dumps( _to_rickshaw(graph, True) )
 
         return render('ga_report/publisher/read.html')
 
@@ -466,11 +466,11 @@ def _to_rickshaw(data, percentageMode=False):
             for series in others:
                 y += series['data'][i]['y']
             data_other.append({'x':x,'y':y})
-        data.append({
+        raw_data.append({
             'name':'Other',
             'data': data_other
             })
-    return data
+    return raw_data
 
 
 def _get_top_publishers(limit=20):

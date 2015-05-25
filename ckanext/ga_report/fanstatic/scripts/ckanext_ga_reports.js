@@ -2,7 +2,7 @@ var CKAN = CKAN || {};
 CKAN.GA_Reports = {};
 
 CKAN.GA_Reports.render_rickshaw = function( css_name, data, mode, colorscheme ) {
-    var graphLegends = $('#graph-legend-container');
+    var graphLegends = $('#graph-legend-container_'+css_name);
 
     function renderError(alertClass,alertText,legendText) {
         $("#chart_"+css_name)
