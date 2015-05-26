@@ -17,10 +17,6 @@
         {% endif %}
     </h1>
 
-    <strong>{{ _('Graph Legend') }}</strong>
-    <div id="graph-legend-container">
-        <div style="display: none;" id="legend_none">{{ _('(No graph is loaded)') }}</div>
-    </div>
     <div class="whitebox">
         {% if c.graph_data %}
             {{ ga_util.rickshaw_graph(c.graph_data,'dataset-downloads') }}
@@ -40,7 +36,7 @@
 
         <select name="publisher">
             <option value=''>{{ _('All publishers') }}</option>
-            {% for val,desc in c.publishers %}
+            {% for val, desc in c.publishers %}
             <option value='{{ val }}'>{{ desc }}</option>
             {% endfor %}
         </select>
@@ -54,10 +50,10 @@
      <table class="ga-reports-table table table-condensed table-bordered">
        <tr>
          <th>{{ _('Dataset') }}</th>
-         <th>{{ _('Views') }}</th>
-         <th>{{ _('Downloads') }}</th>
+         <th class="td-numeric">{{ _('Views') }}</th>
+         <th class="td-numeric">{{ _('Downloads') }}</th>
        </tr>
-       {% for package, views, visits,downloads in c.top_packages %}
+       {% for package, views, visits, downloads in c.top_packages %}
          <tr>
            <td>
                 {{ h.link_to(package.title or package.name, h.url_for(controller='package', action='read', id=package.name)) }}

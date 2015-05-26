@@ -312,11 +312,9 @@ class GaDatasetReport(BaseController):
         c.month_desc = 'all months'
         if c.month:
             c.month_desc = ''.join([m[1] for m in c.months if m[0]==c.month])
-
         c.top_publishers = _get_top_publishers()
         graph_data = _get_top_publishers_graph()
         c.top_publishers_graph = json.dumps( _to_rickshaw(graph_data) )
-
         x = render('ga_report/publisher/index.html')
 
         return x
@@ -422,7 +420,6 @@ class GaDatasetReport(BaseController):
             all_series[package.name]['raw'][entry.period_name] = int(entry.pageviews)
         graph = [ all_series[series_name] for series_name in top_package_names ]
         c.graph_data = json.dumps( _to_rickshaw(graph, True) )
-
         return render('ga_report/publisher/read.html')
 
 def _to_rickshaw(data, percentageMode=False):
@@ -432,7 +429,7 @@ def _to_rickshaw(data, percentageMode=False):
     # for entire history, eg. for recently-added datasets
     x_axis = [x[0] for x in c.months]
     x_axis.reverse() # Ascending order
-    x_axis = x_axis[:-1] # Remove latest month
+    #x_axis = x_axis[:-1] # Remove latest month
     totals = {}
     for series in data:
         series['data'] = []

@@ -6,16 +6,12 @@
 
 {% block primary_content %}
 
-  <h1>{{ _('Site Usage') }}</h1>
+  <h1>{{ _('Site Usage') }}
+    <small>{{ _('Publishers') }}</small>
+  </h1>
 
   <a class="btn button btn-primary btn-sm pull-right" href="{{ download_link }}"><i class="icon-download"></i>&nbsp; {{ _('Download as CSV') }}</a>
 
-  <strong>{{ _('Graph Legend') }}</strong>
-  <div id="graph-legend-container">
-    <div style="display: none;" id="legend_none">{{ _('(No graph is loaded)') }}</div>
-  </div>
-
-  <strong>{{ _('Publishers') }}</strong>
     <div class="whitebox">
         {{ ga_util.rickshaw_graph(c.top_publishers_graph,'publishers') }}
     </div>
@@ -39,6 +35,7 @@
             </tr>
         {% endfor %}
     </table>
+
 {% endblock %}
 
 {% block styles %}
