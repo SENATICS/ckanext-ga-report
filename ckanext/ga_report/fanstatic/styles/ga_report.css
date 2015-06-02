@@ -16,7 +16,7 @@
 .rickshaw_chart {
   position: absolute;
   left: 40px;
-  width: 500px;
+  width: 800px;
   top: 0;
   bottom: 0;
 }
@@ -52,7 +52,8 @@
   display: block;
   white-space: normal;
   float: left;
-  width: 200px;
+  /*width: 200px;*/
+  width: 800px;
 }
 .rickshaw_legend .line .label:hover {
   text-decoration: underline;

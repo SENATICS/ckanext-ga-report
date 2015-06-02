@@ -1,7 +1,7 @@
 var CKAN = CKAN || {};
 CKAN.GA_Reports = {};
 
-CKAN.GA_Reports.render_rickshaw = function( css_name, data, mode, colorscheme ) {
+CKAN.GA_Reports.render_rickshaw = function( css_name, data, mode, colorscheme, not_suport_msg, not_rendered_msg, no_data_msg, not_available_msg, not_loaded_msg, references_msg) {
     var graphLegends = $('#graph-legend-container_'+css_name);
 
     function renderError(alertClass,alertText,legendText) {
@@ -14,11 +14,11 @@ CKAN.GA_Reports.render_rickshaw = function( css_name, data, mode, colorscheme ) 
     }
 
     if (!Modernizr.svg) {
-        renderError('','Your browser does not support vector graphics. No graphs can be rendered.','(Graph cannot be rendered)');
+        renderError('','not_suport_msg',not_rendered_msg);
         return;
     }
     if (data.length==0) {
-        renderError('alert-info','There is not enough data to render a graph.','(No graph available)');
+        renderError('alert-info',no_data_msg,not_available_msg);
         return
     }
     var myLegend = $('<div id="legend_'+css_name+'"/>').appendTo(graphLegends);
@@ -55,7 +55,8 @@ CKAN.GA_Reports.render_rickshaw = function( css_name, data, mode, colorscheme ) 
       graph: graph,
       legend: legend
     } );
-    myLegend.prepend('<div class="instructions">Click on a series below to isolate its graph:</div>');
+
+    myLegend.prepend('<div class="instructions">'+ references_msg +'</div>');
     graph.render();
 };
 
@@ -119,13 +120,17 @@ CKAN.GA_Reports.bind_sidebar = function() {
 };
 
 CKAN.GA_Reports.bind_month_selector = function() {
+  console.log("bind_month_selector");
   var handler = function(e) {
     var target = $(e.delegateTarget);
     var form = target.closest('form');
     var url = form.attr('action')+'?month='+target.val()+window.location.hash;
+    //console.log(url);
     window.location = url;
   };
   var selectors = $('select[name="month"]');
-  assert(selectors.length>0);
+  if (!selectors.length>0) {
+    throw message || "Assertion failed";
+  }
   selectors.bind('change', handler);
 };

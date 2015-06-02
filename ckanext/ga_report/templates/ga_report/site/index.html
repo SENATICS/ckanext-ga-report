@@ -59,17 +59,16 @@
              </tr>
              {% for name, value, graph in c.global_totals %}
                <tr>
-                      <td>{{ name }}</td>
-                      <td class="td-numeric">{{ value }}</td>
-                      <td class="sparkline-cell">
-                        <span class="sparkline" sparkTooltips="">
-                          {% for x,y in graph %}
-                          {{ graph }}
-                          {#{ ','.join(y) }#}
-                          {% endfor %}
-                        </span>
-                      </td>
-                  </tr>
+                  <td>{{ _(name) }}</td>
+                  <td class="td-numeric">{{ value }}</td>
+                  <td class="sparkline-cell">
+                    <span class="sparkline" sparkTooltips="{% for x,y in graph %} {{ x + ', ' }} {% endfor %}">
+                      {% for x,y in graph %}
+                      {{ y + ', ' }}
+                      {% endfor %}
+                    </span>
+                  </td>
+               </tr>
              {% endfor %}
              </table>
       </div>
@@ -78,7 +77,7 @@
            <hr/>
            <p>{{ _('Note: Where a browser has a large number of versions, these have been grouped together.') }}</p>
            <form class="form-inline" action="{{ h.url_for(controller='ckanext.ga_report.controller:GaReport',action='index') }}" method="get">
-             <h4 class="ga-reports-heading">{{ _('Show stats table for:') }}</h4>
+             <h4 class="ga-reports-heading">{{ _('Show stats table for') }}:</h4>
              {{ ga_util.month_selector(c.month, c.months, c.day) }}
            </form>
         <hr/>
@@ -163,7 +162,7 @@
             console.log("ini function")
             CKAN.GA_Reports.bind_sparklines();
             CKAN.GA_Reports.bind_sidebar();
-            CKAN.GA_Reports.bind_month_selector();
+            //CKAN.GA_Reports.bind_month_selector();
         });
    </script>
 

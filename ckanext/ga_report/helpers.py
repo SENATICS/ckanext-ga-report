@@ -7,6 +7,7 @@ from ckan.logic import get_action
 
 from ckanext.ga_report.ga_model import GA_Url, GA_Publisher
 from ckanext.ga_report.controller import _get_publishers
+from ckan.common import _
 _log = logging.getLogger(__name__)
 
 def popular_datasets(count=10):
@@ -137,7 +138,7 @@ def month_option_title(month_iso, months, day):
         return month_iso
     month_name = months[index][1]
     if index==0:
-        return month_name + (' (up to %s)'%day)
+        return month_name + ' (' + (_('up to') + ' %s)' % day)
     return month_name
 
 

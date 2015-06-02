@@ -6,11 +6,11 @@
 
 {% block primary_content %}
 
+  <a class="btn button btn-primary btn-sm pull-right" href="{{ download_link }}"><i class="icon-download"></i>&nbsp; {{ _('Download as CSV') }}</a>
+
   <h1>{{ _('Site Usage') }}
     <small>{{ _('Publishers') }}</small>
   </h1>
-
-  <a class="btn button btn-primary btn-sm pull-right" href="{{ download_link }}"><i class="icon-download"></i>&nbsp; {{ _('Download as CSV') }}</a>
 
     <div class="whitebox">
         {{ ga_util.rickshaw_graph(c.top_publishers_graph,'publishers') }}

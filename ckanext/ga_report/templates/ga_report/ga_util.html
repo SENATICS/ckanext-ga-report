@@ -1,10 +1,18 @@
 {% macro month_selector(current_month, months, day) -%}
     <select name="month">
-        <option value=''>{{ _('All months') }}</option>
-        {% for iso_code,string_name in months %}
-        <option value='{{ iso_code }}'>{{ h.month_option_title(iso_code,months,day) }}</option>
+        <option value='' {% if not current_month %} selected='selected' {% endif %}>
+        {{ _('All months') }}</option>
+        {% for iso_code, string_name in months %}
+        <option value='{{ iso_code }}' {% if current_month == iso_code %} selected='selected' {% endif %}>
+        {{ h.month_option_title(iso_code,months,day) }}</option>
         {% endfor %}
     </select>
+    <script type="text/javascript">
+        $(function(){
+            console.log("Cambio el mes");
+            CKAN.GA_Reports.bind_month_selector();
+        });
+     </script>
 {%- endmacro %}
 
 {% macro social_table(items, with_source=False) -%}
@@ -29,24 +37,32 @@
 {%- endmacro %}
 
 {% macro rickshaw_graph(items_json,id,mode='line',colorscheme='munin') -%}
-    <strong id="label-leyend">{{ _('Graph Legend') }}</strong>
-    <div id="graph-legend-container_{{ id }}">
-        <div style="display: none;" id="legend_none">{{ _('(No graph is loaded)') }}</div>
-    </div>
-    <br/>
     <div id="chart_container_{{ id }}" class="rickshaw_chart_container">
         <div id="y_axis_{{ id }}" class="rickshaw_y_axis"></div>
         <div id="chart_{{ id }}" class="rickshaw_chart"></div>
+
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
         <script type="text/javascript">
             $(function(){
                 console.log("rickshaw_graph");
                 //var items = [{"raw": {"2014-10": 46336.0, "2014-11": 42146.0, "2013-12": 24492.0, "2013-11": 27745.0, "2013-10": 30463.0}, "data": [{"y": 42.177107636591565, "x": 1417392000}, {"y": 42.384105960264904, "x": 1420070400}, {"y": 44.16397777180246, "x": 1422748800}, {"y": 37.38616040720869, "x": 1425168000}, {"y": 47.85299590324307, "x": 1427846400}], "name": "Chrome"}, {"raw": {"2014-10": 42906.0, "2014-11": 35809.0, "2013-12": 24413.0, "2013-11": 27838.0, "2013-10": 31722.0}, "data": [{"y": 29.60383512669615, "x": 1417392000}, {"y": 28.45173590206703, "x": 1420070400}, {"y": 31.054494935914672, "x": 1422748800}, {"y": 21.557985967808502, "x": 1425168000}, {"y": 25.903802077926226, "x": 1427846400}], "name": "Internet Explorer"}];
                 var items = {{ items_json|safe }};
-                console.log(items);
-                CKAN.GA_Reports.render_rickshaw('{{ id }}', items, '{{ mode }}', '{{ colorscheme }}');
+                var msg1 = "{{ _('Your browser does not support vector graphics. No graphs can be rendered.') }}";
+                var msg2 = "{{ _('(Graph cannot be rendered)') }}";
+                var msg3 = "{{ _('There is not enough data to render a graph.') }}";
+                var msg4 = "{{ _('(No graph available)') }}";
+                var msg5 = "{{ _('(No graph is loaded)') }}";
+                var msg6 = "{{ _('Click on a series below to isolate its graph:') }}";
+                //console.log(items);
+                CKAN.GA_Reports.render_rickshaw('{{ id }}', items, '{{ mode }}', '{{ colorscheme }}',
+                   msg1, msg2, msg3, msg4, msg5, msg6);
             });
         </script>
+    </div>
+            <br/>
+    <strong id="label-leyend">{{ _('Graph Legend') }}</strong>
+    <div id="graph-legend-container_{{ id }}">
+        <div style="display: none;" id="legend_none">{{ _('(No graph is loaded)') }}</div>
     </div>
 {%- endmacro %}
 

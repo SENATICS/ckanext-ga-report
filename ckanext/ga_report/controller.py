@@ -11,6 +11,8 @@ import sqlalchemy
 from sqlalchemy import func, cast, Integer
 import ckan.model as model
 from ga_model import GA_Url, GA_Stat, GA_ReferralStat, GA_Publisher
+from ckan.common import _
+from pylons.i18n import get_lang
 
 log = logging.getLogger('ckanext.ga-report')
 
@@ -20,7 +22,7 @@ def _get_month_name(strdate):
     import calendar
     from time import strptime
     d = strptime(strdate, '%Y-%m')
-    return '%s %s' % (calendar.month_name[d.tm_mon], d.tm_year)
+    return '%s %s' % (_(calendar.month_name[d.tm_mon]), d.tm_year)
 
 def _get_unix_epoch(strdate):
     from time import strptime,mktime
@@ -57,13 +59,23 @@ def _month_details(cls, stat_key=None):
 
     vals = q.order_by("period_name desc").all()
 
-    # For the most recent month, add 'ordinal' to the day
-    # e.g. '27' -> day='27th'
-    if vals and vals[0][1]:
-        day = int(vals[0][1])
-        ordinal = 'th' if 11 <= day <= 13 \
-            else {1: 'st', 2: 'nd', 3: 'rd'}.get(day % 10, 'th')
-        day = "{day}{ordinal}".format(day=day, ordinal=ordinal)
+    lang = get_lang()
+    #log.debug(lang)
+    # If lang is None the actual language is english,
+    # if lang is 'es' the actual language is spanish
+    # otherwise the month is rendered in english language.
+    if lang and lang[0] == 'es':
+        # For the most recent month in spanish
+        if vals and vals[0][1]:
+            day = int(vals[0][1])
+    else:
+        # For the most recent month, add 'ordinal' to the day
+        # e.g. '27' -> day='27th'
+        if vals and vals[0][1]:
+            day = int(vals[0][1])
+            ordinal = 'th' if 11 <= day <= 13 \
+                else {1: 'st', 2: 'nd', 3: 'rd'}.get(day % 10, 'th')
+            day = "{day}{ordinal}".format(day=day, ordinal=ordinal)
 
     for m in vals:
         months.append((m[0], _get_month_name(m[0])))
@@ -430,6 +442,8 @@ def _to_rickshaw(data, percentageMode=False):
     x_axis = [x[0] for x in c.months]
     x_axis.reverse() # Ascending order
     #x_axis = x_axis[:-1] # Remove latest month
+    #log.debug("++++++++++++++ x_axis")
+    #log.debug(x_axis)
     totals = {}
     for series in data:
         series['data'] = []
