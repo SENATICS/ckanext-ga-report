@@ -478,7 +478,7 @@ def _to_rickshaw(data, percentageMode=False):
                 y += series['data'][i]['y']
             data_other.append({'x':x,'y':y})
         raw_data.append({
-            'name':'Other',
+            'name': _('Other'),
             'data': data_other
             })
     return raw_data

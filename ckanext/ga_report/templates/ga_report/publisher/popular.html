@@ -1,7 +1,11 @@
-{% extends "qa/base.html" %}
+{% extends "page.html" %}
 
-{% block primary_content %}
+{% block breadcrumb_content %}
+{% endblock %}
 
+{% block primary %}
+<article class="module">
+  <div class="module-content">
     {% if dataset_count == 0 %}
         <p>{{ _('We do not currently have usage data for') }} {{ publisher.title }}</p>
     {% endif %}
@@ -25,8 +29,10 @@
             </p>
         </div>
     {% endif %}
-
+    </div>
+  </article>
 {% endblock %}
 
+{% block secondary %}{% endblock %}
 
 
