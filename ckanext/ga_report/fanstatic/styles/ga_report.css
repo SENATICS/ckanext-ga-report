@@ -21,7 +21,7 @@
   bottom: 0;
 }
 .rickshaw_legend {
-  background: transparent;
+  background: transparent !important;
   width: 100%;
   padding-top: 4px;
 }

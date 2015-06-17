@@ -61,20 +61,25 @@
                    <th class="td-numeric">{{ _('Value') }}</th>
                    <th>{{ _('History') }}</th>
                  </tr>
+
                  {% for name, value, graph in c.global_totals %}
                    <tr>
                       <td>{{ _(name) }}</td>
                       <td class="td-numeric">{{ value }}</td>
                       <td class="sparkline-cell">
-                        <span class="sparkline" sparkTooltips="{% for x,y in graph %} {{ x + ', ' }} {% endfor %}">
-                          {% for x,y in graph %}
-                          {{ y + ', ' }}
-                          {% endfor %}
+                        <span class="sparkline" sparkTooltips="{% for x,y in graph %}{{x}}{% if not loop.last %}{{','}}{% endif %}{% endfor %}">
+                         {% for x,y in graph %}
+                            {{y}}
+                            {% if not loop.last %}
+                                 {{','}}
+                            {% endif %}
+                         {% endfor %}
                         </span>
                       </td>
                    </tr>
+                   {#{ graph }#}
                  {% endfor %}
-                 </table>
+               </table>
           </div>
            <div class="tab-pane" id="browsers_versions">
                {{ ga_util.rickshaw_graph(c.browser_versions_graph,'browser-versions',mode='stack') }}
